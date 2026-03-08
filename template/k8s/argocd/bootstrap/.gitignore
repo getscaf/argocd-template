@@ -1,7 +1,8 @@
-!sandbox/.env
-!staging/.env
-!prod/.env
+!env/sandbox.env
+!env/staging.env
+!env/prod.env
 !.env
+state/
 controlplane.yaml
 kubeconfig
 talosconfig

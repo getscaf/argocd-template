@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ copier__project_slug }}-config
+  labels:
+    app.kubernetes.io/name: {{ copier__project_slug }}
+data:
+  APP_NAME: {{ copier__project_name | tojson }}

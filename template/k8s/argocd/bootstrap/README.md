@@ -7,17 +7,17 @@
    created Git repository.
 
    Review the branch rule in `bootstrap_root_app` job in
-   `bootstrap-cluster/argocd.yaml`:
+   `k8s/argocd/bootstrap/argocd.yaml`:
 
    ```
    vars:
      BRANCH:
-       sh: ([ "$ENV" = "production" ] && echo "main" || echo "develop")
+       sh: ([ "$ENV" = "prod" ] && echo "main" || echo "develop")
    ```
 
    Review the `targetRevision` in the `kustomization.yaml` files shown below:
 
-   `argocd/sandbox/apps/kustomization.yaml`:
+   `k8s/argocd/overlays/sandbox/apps/kustomization.yaml`:
 
    ```
    patches:
@@ -38,7 +38,20 @@
        name: {{ copier__project_slug }}-prod
    ```
 
-   `argocd/prod/apps/kustomization.yaml`:
+   `k8s/argocd/overlays/staging/apps/kustomization.yaml`:
+
+   ```
+   patches:
+   - patch: |-
+       - op: replace
+         path: /spec/source/targetRevision
+         value: develop
+     target:
+       kind: Application
+       name: ingress
+   ```
+
+   `k8s/argocd/overlays/prod/apps/kustomization.yaml`:
 
    ```
    patches:
@@ -55,7 +68,7 @@
    repo. This step requires access to the 1password vault for your project.
 
    Review the vault name in the `op` cli command in
-   `bootstrap-cluster/argocd.yaml`:
+   `k8s/argocd/bootstrap/argocd.yaml`:
 
    ```
       - op item create
@@ -92,7 +105,7 @@ The `argocd:bootstrap` task configuration is as follows:
    installed, we can generate secrets for the given environment.
 
    ```shell
-   cd ..
+   cd ../../..
    make debug-$ENV-secrets
    make $ENV-secrets
    ```

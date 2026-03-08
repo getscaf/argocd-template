@@ -15,7 +15,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: argocd/${ENV}/apps
+    path: k8s/argocd/overlays/${ENV}/apps
     repoURL: {{ copier__repo_url }}
     targetRevision: ${BRANCH}
   syncPolicy:

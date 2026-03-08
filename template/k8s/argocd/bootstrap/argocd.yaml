@@ -70,7 +70,7 @@ tasks:
   install:
     desc: Deploy ArgoCD using Helm
     env:
-      KUBECONFIG: "{{ '{{.ENV}}' }}/kubeconfig"
+      KUBECONFIG: "state/{{ '{{.ENV}}' }}/kubeconfig"
     cmds:
       - helm repo add argocd https://argoproj.github.io/argo-helm
       - helm repo update
@@ -89,7 +89,7 @@ tasks:
         sh: aws ssm get-parameter --name "/{{ copier__project_slug }}/{{ '{{.ENV}}' }}/argocd/github_deploy_key" --with-decryption --query Parameter.Value --output text | base64 -w0
     desc: Create and apply repo credentials secret for each repo
     env:
-      KUBECONFIG: "{{ '{{.ENV}}' }}/kubeconfig"
+      KUBECONFIG: "state/{{ '{{.ENV}}' }}/kubeconfig"
     cmds:
       - |
         cat <<EOF | kubectl apply -f -
@@ -114,7 +114,7 @@ tasks:
 
       Usage: ARGOCD_GITHUB_ACCESS_TOKEN="secret token" task argocd:create_github_webhook_secret
     env:
-      KUBECONFIG: "{{ '{{.ENV}}' }}/kubeconfig"
+      KUBECONFIG: "state/{{ '{{.ENV}}' }}/kubeconfig"
     cmds:
       - kubectl -n argocd create secret generic github-token
           --from-literal=token="{{ '{{ARGOCD_GITHUB_ACCESS_TOKEN}}' }}"
@@ -125,10 +125,10 @@ tasks:
       vars: [ENV]
     vars:
       BRANCH:
-        sh: ([ "$ENV" = "production" ] && echo "main" || echo "develop")
+        sh: ([ "$ENV" = "prod" ] && echo "main" || echo "develop")
     desc: Bootstrap the Cluster
     env:
-      KUBECONFIG: "{{ '{{.ENV}}' }}/kubeconfig"
+      KUBECONFIG: "state/{{ '{{.ENV}}' }}/kubeconfig"
     cmds:
       - |
         export ENV="{{ '{{.ENV}}' }}" && \
@@ -140,7 +140,7 @@ tasks:
     requires:
       vars: [ENV]
     env:
-      KUBECONFIG: "{{ '{{.ENV}}' }}/kubeconfig"
+      KUBECONFIG: "state/{{ '{{.ENV}}' }}/kubeconfig"
     cmds:
       - |
         echo "Waiting for sealed-secrets-controller pod to be created..."
@@ -160,14 +160,14 @@ tasks:
     requires:
       vars: [ENV]
     env:
-      KUBECONFIG: "{{ '{{.ENV}}' }}/kubeconfig"
+      KUBECONFIG: "state/{{ '{{.ENV}}' }}/kubeconfig"
     cmds:
       - |
-        AWS_S3_ACCESS_KEY_ID=$(tofu -chdir=../terraform/{{ '{{.ENV}}' }} output -raw cnpg_user_access_key) \
-        AWS_S3_SECRET_ACCESS_KEY=$(tofu -chdir=../terraform/{{ '{{.ENV}}' }} output -raw cnpg_user_secret_key) \
+        AWS_S3_ACCESS_KEY_ID=$(tofu -chdir=../../../terraform/{{ '{{.ENV}}' }} output -raw cnpg_user_access_key) \
+        AWS_S3_SECRET_ACCESS_KEY=$(tofu -chdir=../../../terraform/{{ '{{.ENV}}' }} output -raw cnpg_user_secret_key) \
         DJANGO_SECRET_KEY=$(LC_CTYPE=C tr -dc A-Za-z0-9 </dev/urandom | head -c 32; echo) \
         ENVIRONMENT={{ '{{.ENV}}' }} \
-        envsubst < ../k8s/templates/secrets.yaml.template | kubeseal -n {{ copier__rfc1123_subdomain }}-{{ '{{.ENV}}' }} --format yaml > ../k8s/{{ '{{.ENV}}' }}/secrets.yaml
+        envsubst < ../../../k8s/{{ copier__project_slug }}/templates/secrets.yaml.template | kubeseal -n {{ copier__rfc1123_subdomain }}-{{ '{{.ENV}}' }} --format yaml > ../../../k8s/{{ copier__project_slug }}/overlays/{{ '{{.ENV}}' }}/secrets.yaml
 
   commit_sealed_secrets:
     desc: Commit and push the sealed secrets
@@ -175,6 +175,6 @@ tasks:
       vars: [ENV]
     cmds:
       - |
-        git add ../k8s/{{ '{{.ENV}}' }}/secrets.yaml
+        git add ../../../k8s/{{ copier__project_slug }}/overlays/{{ '{{.ENV}}' }}/secrets.yaml
         git commit -m "feat(secrets): add sealed secrets for {{ '{{.ENV}}' }}"
         git push

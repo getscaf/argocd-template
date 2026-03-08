@@ -19,7 +19,7 @@ patches:
       value: main
     - op: replace
       path: /spec/source/path
-      value: argocd/prod/ingress
+      value: k8s/argocd/overlays/prod/ingress
   target:
     kind: Application
     name: ingress

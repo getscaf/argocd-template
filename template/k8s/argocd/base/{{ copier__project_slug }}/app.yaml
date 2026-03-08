@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: {{ copier__repo_url }}
     targetRevision: main
-    path: k8s/prod
+    path: k8s/{{ copier__project_slug }}/overlays/prod
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ copier__rfc1123_subdomain }}-prod

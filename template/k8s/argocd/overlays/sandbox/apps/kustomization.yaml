@@ -18,7 +18,7 @@ patches:
         value: develop
       - op: replace
         path: /spec/source/path
-        value: argocd/sandbox/ingress
+        value: k8s/argocd/overlays/sandbox/ingress
     target:
       kind: Application
       name: ingress
@@ -31,7 +31,7 @@ patches:
         value: {{ copier__project_slug }}-sandbox
       - op: replace
         path: /spec/source/path
-        value: k8s/sandbox
+        value: k8s/{{ copier__project_slug }}/overlays/sandbox
       - op: replace
         path: /spec/destination/namespace
         value: {{ copier__project_slug }}-sandbox

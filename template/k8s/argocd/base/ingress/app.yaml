@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: {{ copier__repo_url }}
     targetRevision: main
-    path: argocd/prod/ingress
+    path: k8s/argocd/overlays/prod/ingress
   destination:
     server: https://kubernetes.default.svc
     namespace: default
