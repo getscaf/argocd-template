@@ -60,5 +60,12 @@ copier copy <template-repo-url> /path/to/new-project --trust
 
 ## Template Validation
 
-`.github/workflows/template-correctness.yaml` renders a sample project on each
-push/PR to verify template correctness.
+Run local render checks with:
+
+```bash
+
+task test-template-render
+
+```
+
+This repository also includes `.github/workflows/template-correctness.yaml`, which runs the same check on every push/PR (for GitHub CI).
