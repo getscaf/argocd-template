@@ -1,0 +1,17 @@
+version: '3'
+vars:
+  ENV: {{ "'{{.ENV}}'" }}
+
+includes:
+  argocd:
+    taskfile: ./argocd.yaml
+    vars:
+      ENV: {{ "'{{.ENV}}'" }}
+      ARGOCD_VERSION: {{ "'{{.ARGOCD_VERSION}}'" }}
+
+tasks:
+  default:
+    desc: |
+      List all available tasks in the Taskfile.
+    cmds:
+      - task --list
