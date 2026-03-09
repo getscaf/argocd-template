@@ -31,7 +31,7 @@ fi
 
 "${copy_cmd[@]}"
 
-test -f "$out_dir/README.md"
+test -f "$out_dir/docs/argocd.md"
 test -f "$out_dir/LICENSE"
 test -f "$out_dir/.copier-answers.yml"
 test ! -f "$out_dir/{{_copier_conf.answers_file}}"

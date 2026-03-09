@@ -3,19 +3,19 @@ import pathlib
 import shutil
 import subprocess
 
-CI_PROVIDER = "github"
-SEMANTIC_RELEASE = True
-SECRET_SCANNING = True
-TASK_RUNNER = "task"
-CONFIGURE_REPO = True
-REPO_PROVIDER = "github"
-REPO_ORG = "getscaf"
-REPO_NAME = "argocd-template"
-REPO_URL = "git@github.com:getscaf/argocd-template.git"
-CREATE_REPO = True
-REPO_VISIBILITY = "public"
-AUTHOR_NAME = "Six Feet Up"
-AUTHOR_EMAIL = "info@sixfeetup.com"
+CI_PROVIDER = {{ (copier__repo_provider if copier__configure_repo else copier__ci_provider) | tojson }}
+SEMANTIC_RELEASE = {{ 'True' if copier__enable_semantic_release else 'False' }}
+SECRET_SCANNING = {{ 'True' if copier__enable_secret_scanning else 'False' }}
+TASK_RUNNER = {{ copier__task_runner | tojson }}
+CONFIGURE_REPO = {{ 'True' if copier__configure_repo else 'False' }}
+REPO_PROVIDER = {{ (copier__repo_provider if copier__configure_repo else "github") | tojson }}
+REPO_ORG = {{ (copier__repo_org if copier__configure_repo else "") | tojson }}
+REPO_NAME = {{ (copier__repo_name if copier__configure_repo else "") | tojson }}
+REPO_URL = {{ copier__repo_url | tojson }}
+CREATE_REPO = {{ 'True' if (copier__create_repo if copier__configure_repo else False) else 'False' }}
+REPO_VISIBILITY = {{ (copier__repo_visibility if (copier__configure_repo and copier__create_repo) else "public") | tojson }}
+AUTHOR_NAME = {{ copier__author_name | tojson }}
+AUTHOR_EMAIL = {{ copier__email | tojson }}
 
 PROJECT_ROOT = pathlib.Path.cwd()
 TERMINATOR = "\x1b[0m"
