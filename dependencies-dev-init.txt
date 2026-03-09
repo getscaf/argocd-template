@@ -4,8 +4,5 @@ semantic-release
 @semantic-release/changelog
 @semantic-release/git
 conventional-changelog-conventionalcommits
-{% if copier__ci_provider == "github" %}
+
 @semantic-release/github
-{% else %}
-@semantic-release/gitlab
-{% endif %}

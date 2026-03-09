@@ -1,6 +1,6 @@
 {
-  "name": "{{ copier__project_dash }}",
-  "version": "{{ copier__version }}",
+  "name": "argocd-template",
+  "version": "0.1.0",
   "private": true,
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
